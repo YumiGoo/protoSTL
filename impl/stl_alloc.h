@@ -2,8 +2,14 @@
 
 #include <stdlib.h>
 
-#define __THROW_BAD_ALLOC
+#ifndef __THROW_BAD_ALLOC
+#   include <iostream>
+    //这里定义多条语句时需要防止发生歧义, 如果只用大括号可能会导致if意外结束使得else无法匹配
+    //ex. if{}; else 大括号外的;导致else无法匹配if
+#   define __THROW_BAD_ALLOC do{cerr << "out of memory" << endl; exit(0);}while(0) 
+#endif
 
+/* ************************ 初级分配器 ************************ */
 //一级分配器 用于大开销的内存分配和内存溢出情况的处理
 template <int inst /* 用不到的模板参数, 这个参数应该代表的是instance，估计可能是可以根据一些编译期常量来对应不同的实现，比如说特化一些debug版本或者别的什么 */> 
 class __malloc_alloc_template {
@@ -74,7 +80,7 @@ void* __malloc_alloc_template<inst>::oom_realloc(void* ptr, size_t n) {
     while (1) {
         if (__malloc_alloc_oom_handler == 0) __THROW_BAD_ALLOC;//这句为什么要在循环中？
         (*__malloc_alloc_oom_handler)();//不断调用处理例程释放内存
-        ptr = realloc(ptr, n);;
+        ptr = realloc(ptr, n);
         if (ptr) return ptr;
     }
 }
@@ -82,8 +88,9 @@ void* __malloc_alloc_template<inst>::oom_realloc(void* ptr, size_t n) {
 typedef __malloc_alloc_template<0> malloc_alloc;
 
 
+/* ************************ 次级分配器 ************************ */
 //次级分配器 目前没有考虑多线程情况
-template <int inst> //用不到的模板参数
+template <int inst>
 class __default_alloc_template {
 public:
     static void* allocate(size_t n) {
