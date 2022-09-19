@@ -5,7 +5,7 @@ You are a a a a a a a simple STL aaaaaaaa!
 但是能吃。
 
 # TODO list
-- [ ] allocator(单线程)
+- [x] allocator(单线程)
 - [ ] construct
 - [ ] 单元测试模板
 - [ ] 基础算法copy fill等
