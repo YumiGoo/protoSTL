@@ -1,6 +1,6 @@
 //STL标准 construt和alloc应该在此声明
 #pragma once
 
-#include <stl_alloc.hpp>
+#include <stl_alloc.h>
 #include <stl_construct.h>
 #include <stl_uninitialized.h>
