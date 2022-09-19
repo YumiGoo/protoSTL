@@ -1,1 +1,0 @@
-//STL标准 construt和alloc应该在此声明

@@ -1,0 +1,4 @@
+#pragma once
+
+#include <stl_algo.h>
+#include <stl_algobase.h>
