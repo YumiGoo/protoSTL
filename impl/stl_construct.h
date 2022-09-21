@@ -2,6 +2,7 @@
 
 #include <new.h> //包含placement new
 #include <stl_algobase.h>
+#include <iterator_traits.h>
 #include <type_traits.h>
 
 
@@ -24,18 +25,23 @@ void destroy(T* t) {
 //对两个迭代器之间元素的析构，需要判断trival
 template <typename Iterator>
 void destroy(Iterator first, Iterator last) {
-    typedef __type_traits<*first>::has_trivial_destructor has_trivial_destructor;
-    __destroy(first, last, has_trivial_destructor());
+    __destroy(first, last, value_type(first));//调用iterator全局函数
+}
+
+template <typename Iterator, typename T>
+void __destroy(Iterator first, Iterator last, T*) {
+    typedef __type_traits<T>::has_trivial_destructor has_trivial_destructor;
+    __destroy_aux(first, last, has_trivial_destructor());
 }
 
 template <typename Iterator>
-void __destroy(Iterator first, Iterator last, __true_type) {
+void __destroy_aux(Iterator first, Iterator last, __true_type) {
     //什么都不做
 }
 
 //对需要调用析构函数的元素
 template <typename Iterator>
-void __destroy(Iterator first, Iterator last, __false_type) {
+void __destroy_aux(Iterator first, Iterator last, __false_type) {
     //依次调用析构函数
     for (;first != last; ++first) {
         destroy(&*first);//取指针
@@ -44,10 +50,10 @@ void __destroy(Iterator first, Iterator last, __false_type) {
 
 //似乎没有必要
 template <typename T>
-void __destroy(T* first, T* last, __false_type) {
+void __destroy_aux(T* first, T* last, __false_type) {
     size_t n = last - first;
     for (int i = 0; i < n; ++i, ++first) {
-        destroy(*first);
+        destroy(&*first);
     }
 }
 

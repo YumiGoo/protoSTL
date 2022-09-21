@@ -3,6 +3,8 @@
         "cstddef": "cpp",
         "xtr1common": "cpp",
         "ostream": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "iterator": "cpp",
+        "xutility": "cpp"
     }
 }
