@@ -6,8 +6,8 @@ You are a a a a a a a simple STL aaaaaaaa!
 
 # TODO list
 - [x] allocator(单线程)
-- [ ] construct
-- [ ] 单元测试模板
+- [x] construct
+- [x] 单元测试模板
 - [ ] 基础算法copy fill等
 - [ ] vector
 - [ ] list

@@ -1,6 +1,12 @@
 #pragma once
 
 #include <iostream>
+#include <string>
+
+//用宏对模板封装，以支持行号传递
+#define UNIT_TEST_BEGIN(testname, equality, type) typedef Unit_test_template<equality<type>, type> testname
+#define UNIT_TEST(testname, value1, value2) testname::expect_eq((value1), (value2), __FILE__, __LINE__)
+#define UNIT_TEST_END(testname) testname::show_results()
 
 //单元测试模板
 template <typename __BinaryOperation, typename T>
@@ -10,18 +16,18 @@ private:
     static int test_count;
     static int test_pass;
 public:
-    static void expect_eq(T, T);
+    static void expect_eq(T, T, std::string, int);
     static void show_results();
 };
 
 //单元测试框架
 template <typename __BinaryOperation, typename T>
-void Unit_test_template<__BinaryOperation, T>::expect_eq(T expect, T actual) {
+void Unit_test_template<__BinaryOperation, T>::expect_eq(T expect, T actual, std::string file, int line) {
     ++test_count;
     if (__BinaryOperation()(expect, actual)) {
         ++test_pass;
     } else {
-        std::cerr << __FILE__ << ":"<< __LINE__ << ": except:" << expect << " actual:" << actual << std::endl; 
+        std::cerr << file << ":"<< line << ": except:" << expect << " actual:" << actual << std::endl; 
     }
 }
 
